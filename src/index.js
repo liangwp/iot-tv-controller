@@ -50,8 +50,18 @@ app.post("/youtubeurl", jsonParser, function (req, res) {
         });
     });
     p.then(function (bestformat_url) {
-        var params = bestformat_url + " -o local";
+        var params = "\""+bestformat_url + "\" -o local";
         var omx = child_process.spawn("omxplayer", params.split(" "));
+        omx.stderr.on("data", function(data) {
+            logger.error(data.toString());
+        });
+        omx.stdout.on("data", function(data) {
+            logger.debug(data.toString());
+        })
+        omx.on("close", function () {
+            logger.debug("omx closed");
+            omx = null;
+        });
     });
 });
 

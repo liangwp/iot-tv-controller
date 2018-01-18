@@ -2,7 +2,6 @@
 
 const express = require("express");
 const Promise = require("bluebird");
-const rp = require("request-promise");
 const cLogger = require("./common-logger.js");
 const logger = cLogger("mylog");
 
@@ -11,14 +10,7 @@ var site = "http://www.youtube.com";
 var app = express();
 
 app.get("/", function (req, res) {
-    rp(site)
-    .then(function (sitehtml) {
-        res.end(sitehtml);
-    })
-    .catch(function (err) {
-        logger.error(err);
-        res.end("an error has occurred");
-    });
+    res.end("hello world");
 });
 
 logger.info("app started on port 8080");

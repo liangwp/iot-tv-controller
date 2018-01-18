@@ -1,8 +1,12 @@
 'use strict';
 
 const log4js = require("log4js");
+const fs = require("fs-extra");
 // appenders source code:
 // https://github.com/log4js-node/log4js-node/tree/master/lib/appenders
+
+var logfile = './logs/general.log';
+fs.ensureFileSync(logfile);
 
 log4js.configure({
     appenders: {
@@ -11,7 +15,7 @@ log4js.configure({
         },
         logfile: {
             type: 'fileSync',
-            filename: './logs/general.log',
+            filename: logfile,
             maxLogSize: 1024 * 1024,
             backups: 10
         }

@@ -46,11 +46,11 @@ app.post("/youtubeurl", jsonParser, function (req, res) {
         */
         cp.on("close", function () {
             logger.debug(bestformat_url);
-            resolve(bestformat_url.slice(0, bestformat_url.length-1); // cut away the extra linebreak
+            resolve(bestformat_url.slice(0, bestformat_url.length-1)); // cut away the extra linebreak
         });
     });
     p.then(function (bestformat_url) {
-        var params = bestformat_url + " -o local";
+        var params = "-o local '" +  bestformat_url + "'";
         var omx = child_process.spawn("omxplayer", params.split(" "));
         omx.stderr.on("data", function(data) {
             logger.error(data.toString());

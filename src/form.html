@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head><title>basic iot tv controller</title>
+<script>
+function sendToServer(inputel) {
+    var url = document.getElementById(inputel).value;
+    console.log(url);
+    var xhr = new XMLHttpRequest();
+    
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4) {
+            if (this.status == 200) {
+                console.log(this.responseText);
+            } else {
+                console.error(this.responseText);
+            }
+        }
+    };
+    
+    xhr.open("POST", "/youtubeurl", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify({"url":url}));
+}
+</script>
+</head>
+<body>
+Enter youtube url here:<br>
+<input type="url" id="myurl" value="https://www.youtube.com/watch?v=k7u9WrQsN_k" size="100"><br>
+<input type="button" value="omxplayer" onclick="sendToServer('myurl');">
+</body>
+</html>

@@ -30,19 +30,19 @@ app.get("/", function (req, res) {
 
 app.get("/test", function (req, res) {
     logger.debug("testevent emitted called");
-    playerState.emit("testevent", {arg: "arg1"})
+    playerState.emit("testevent", {arg: "argA"})
     res.end("should switch to untest state");
 });
 
 app.get("/untest", function (req, res) {
     logger.debug("untestevent emitted called");
-    playerState.emit("untestevent", {arg: "arg1"})
+    playerState.emit("untestevent", {arg: "argB"})
     res.end("should switch to test state");
 });
 
 app.get("/test2", function (req, res) {
     logger.debug("handle testevent2 called");
-    playerState.handle("testevent2", {arg: "arg1"})
+    playerState.play({arg: "argC"});
     res.end("should switch to test state from Ready state");
 });
 
@@ -96,11 +96,6 @@ process.on("SIGTERM", app_cleanup);
 
 
 playerState = new machina.Fsm({
-    initialize: function () {
-        logger.info("app started on port 8080");
-        app.listen(8080);
-        this.transition("s_ready");
-    },
     initialState: "s_uninitialized",
     states: {
         s_uninitialized: {
@@ -112,8 +107,8 @@ playerState = new machina.Fsm({
             _onEnter: function() {
                 logger.info("state: " + this.state);
             },
-            testevent2: function () {
-                logger.info("testevent2 is handled");
+            testevent2: function (arg) {
+                logger.info("testevent2 is handled: " + arg.arg);
             }
         },
         s_test: {
@@ -151,6 +146,16 @@ playerState = new machina.Fsm({
                 logger.info("state: " + this.state);
             },
         }
+    },
+    // inputs
+    initialize: function () {
+        logger.info("app started on port 8080");
+        app.listen(8080);
+        this.transition("s_ready");
+    },
+    play: function (data) {
+        logger.debug(data);
+        this.handle("testevent2", data);
     }
 });
 

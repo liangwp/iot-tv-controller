@@ -11,35 +11,6 @@ const cLogger = require("./common-logger.js");
 const logger = cLogger("mylog");
 
 const machina = require("machina");
-var playerState = new machina.Fsm({
-    initialize: function () {
-        
-    },
-    initialState: "uninitialized",
-    states: {
-        uninitialized: {
-            
-        },
-        ready: {
-            
-        },
-        gettingvideo: {
-            
-        },
-        playing: {
-            
-        },
-        paused: {
-            
-        },
-        ended: {
-            
-        },
-        error: {
-            
-        }
-    }
-});
 
 var app = express();
 var jsonParser = bodyParser.json();
@@ -48,8 +19,11 @@ var htmlform = fs.readFileSync("./src/form.html");
 
 var omx = null;
 
+var playerState = null; // initialized by the FSM constructor later
+
 app.get("/", function (req, res) {
     // for testing purposes, re-read the form
+    logger.debug(playerState.state);
     htmlform = fs.readFileSync("./src/form.html");
     res.end(htmlform);
 });
@@ -94,9 +68,6 @@ app.post("/youtubeurl", jsonParser, function (req, res) {
 });
 
 
-logger.info("app started on port 8080");
-app.listen(8080);
-
 
 function app_cleanup(signal) {
     logger.info("app shutting down: " + signal);
@@ -106,6 +77,52 @@ function app_cleanup(signal) {
 process.on("SIGINT", app_cleanup);
 process.on("SIGTERM", app_cleanup);
 
+
+playerState = new machina.Fsm({
+    initialize: function () {
+        logger.info("app started on port 8080");
+        app.listen(8080);
+        this.transition("ready");
+    },
+    initialState: "uninitialized",
+    states: {
+        uninitialized: {
+            _onEnter: function() {
+                logger.info("state: " + this.state);
+            },
+        },
+        ready: {
+            _onEnter: function() {
+                logger.info("state: " + this.state);
+            },
+        },
+        gettingvideo: {
+            _onEnter: function() {
+                logger.info("state: " + this.state);
+            },
+        },
+        playing: {
+            _onEnter: function() {
+                logger.info("state: " + this.state);
+            },
+        },
+        paused: {
+            _onEnter: function() {
+                logger.info("state: " + this.state);
+            },
+        },
+        ended: {
+            _onEnter: function() {
+                logger.info("state: " + this.state);
+            },
+        },
+        error: {
+            _onEnter: function() {
+                logger.info("state: " + this.state);
+            },
+        }
+    }
+});
 
 
 /* notes

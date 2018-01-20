@@ -28,8 +28,25 @@ app.get("/", function (req, res) {
     res.end(htmlform);
 });
 
+app.get("/test", function (req, res) {
+    logger.debug("testevent emitted called");
+    playerState.emit("testevent", {arg: "arg1"})
+    res.end("should switch to untest state");
+});
 
-app.post("/youtubeurl", jsonParser, function (req, res) {
+app.get("/untest", function (req, res) {
+    logger.debug("untestevent emitted called");
+    playerState.emit("untestevent", {arg: "arg1"})
+    res.end("should switch to test state");
+});
+
+app.get("/test2", function (req, res) {
+    logger.debug("handle testevent2 called");
+    playerState.handle("testevent2", {arg: "arg1"})
+    res.end("should switch to test state from Ready state");
+});
+
+app.post("/play-youtube", jsonParser, function (req, res) {
     logger.debug(req.body);
     res.end("ok");
     
@@ -89,12 +106,25 @@ playerState = new machina.Fsm({
         uninitialized: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
-            },
+            }
         },
         ready: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
             },
+            testevent2: function () {
+                logger.info("testevent2 is handled");
+            }
+        },
+        test: {
+            _onEnter: function() {
+                logger.info("state: " + this.state);
+            }
+        },
+        untest: {
+            _onEnter: function() {
+                logger.info("state: " + this.state);
+            }
         },
         gettingvideo: {
             _onEnter: function() {
@@ -121,6 +151,26 @@ playerState = new machina.Fsm({
                 logger.info("state: " + this.state);
             },
         }
+    }
+});
+
+playerState.on("testevent", function () {
+    logger.debug("testevent caught, should transition to test state if in ready state or transition to test state if in untest state");
+    if (playerState.state == "ready") {
+        playerState.transition("test");
+    } else if (playerState.state == "test") {
+        playerState.transition("untest");
+    } else {
+        logger.debug("no transition");
+    }
+});
+
+playerState.on("untestevent", function () {
+    logger.debug("untestevent caught, should transition to test state if in untest state");
+    if (playerState.state == "untest") {
+        playerState.transition("test");
+    } else {
+        logger.debug("no transition");
     }
 });
 

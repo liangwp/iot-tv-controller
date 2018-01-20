@@ -10,8 +10,36 @@ const child_process = require("child_process");
 const cLogger = require("./common-logger.js");
 const logger = cLogger("mylog");
 
-
-var site = "http://www.youtube.com";
+const machina = require("machina");
+var playerState = new machina.Fsm({
+    initialize: function () {
+        
+    },
+    initialState: "uninitialized",
+    states: {
+        uninitialized: {
+            
+        },
+        ready: {
+            
+        },
+        gettingvideo: {
+            
+        },
+        playing: {
+            
+        },
+        paused: {
+            
+        },
+        ended: {
+            
+        },
+        error: {
+            
+        }
+    }
+});
 
 var app = express();
 var jsonParser = bodyParser.json();
@@ -21,11 +49,11 @@ var htmlform = fs.readFileSync("./src/form.html");
 var omx = null;
 
 app.get("/", function (req, res) {
+    // for testing purposes, re-read the form
+    htmlform = fs.readFileSync("./src/form.html");
     res.end(htmlform);
 });
 
-
-// may need to be a full controller to send messages to omxplayer.
 
 app.post("/youtubeurl", jsonParser, function (req, res) {
     logger.debug(req.body);

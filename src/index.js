@@ -99,16 +99,16 @@ playerState = new machina.Fsm({
     initialize: function () {
         logger.info("app started on port 8080");
         app.listen(8080);
-        this.transition("ready");
+        this.transition("s_ready");
     },
-    initialState: "uninitialized",
+    initialState: "s_uninitialized",
     states: {
-        uninitialized: {
+        s_uninitialized: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
             }
         },
-        ready: {
+        s_ready: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
             },
@@ -116,37 +116,37 @@ playerState = new machina.Fsm({
                 logger.info("testevent2 is handled");
             }
         },
-        test: {
+        s_test: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
             }
         },
-        untest: {
+        s_untest: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
             }
         },
-        gettingvideo: {
+        s_gettingvideo: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
             },
         },
-        playing: {
+        s_playing: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
             },
         },
-        paused: {
+        s_paused: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
             },
         },
-        ended: {
+        s_ended: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
             },
         },
-        error: {
+        s_error: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
             },
@@ -157,9 +157,9 @@ playerState = new machina.Fsm({
 playerState.on("testevent", function () {
     logger.debug("testevent caught, should transition to test state if in ready state or transition to test state if in untest state");
     if (playerState.state == "ready") {
-        playerState.transition("test");
+        playerState.transition("s_test");
     } else if (playerState.state == "test") {
-        playerState.transition("untest");
+        playerState.transition("s_untest");
     } else {
         logger.debug("no transition");
     }
@@ -168,7 +168,7 @@ playerState.on("testevent", function () {
 playerState.on("untestevent", function () {
     logger.debug("untestevent caught, should transition to test state if in untest state");
     if (playerState.state == "untest") {
-        playerState.transition("test");
+        playerState.transition("s_test");
     } else {
         logger.debug("no transition");
     }

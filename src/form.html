@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head><title>basic iot tv controller</title>
 <script>
-function sendToServer(inputel) {
+function playURL(inputel) {
     var url = document.getElementById(inputel).value;
     console.log(url);
     var xhr = new XMLHttpRequest();
@@ -18,13 +18,16 @@ function sendToServer(inputel) {
     
     xhr.open("POST", "/play-youtube", true);
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(JSON.stringify({"url":url}));
+    xhr.send(JSON.stringify({"url": url}));
 }
+function commandPlayer(endpoint)
 </script>
 </head>
 <body>
 Enter youtube url here:<br>
 <input type="url" id="myurl" value="https://www.youtube.com/watch?v=k7u9WrQsN_k" size="100"><br>
-<input type="button" value="omxplayer" onclick="sendToServer('myurl');">
+<input type="button" value="play url" onclick="playURL('myurl');">
+<input type="button" value="play/pause" onclick="commandPlayer('/play-pause');">
+<input type="button" value="stop" onclick="commandPlayer('/stop');">
 </body>
 </html>

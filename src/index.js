@@ -30,6 +30,16 @@ app.post("/play-youtube", jsonParser, function (req, res) {
     playerState.getvideo(req.body.url);
 });
 
+app.get("/play-pause", function (req, res) {
+    res.end("ok");
+    playerState.playpause();
+});
+
+app.get("/stop", function (req, res) {
+    res.end("ok");
+    playerState.stop();
+});
+
 function app_cleanup(signal) {
     logger.info("app shutting down: " + signal);
     process.exit();

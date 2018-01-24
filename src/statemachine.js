@@ -36,7 +36,7 @@ module.exports = new machina.Fsm({
                 logger.info("state: " + this.state);
             },
             get_youtube: function (url) {
-                logger.debug("no-op, for now: " + url);
+                logger.debug("youtube page url: " + url);
                 var p = new Promise(function(resolve, reject) {
                     var params = "-g -f best " + url;
                     var cp = child_process.spawn("youtube-dl", params.split(" "));
@@ -115,5 +115,11 @@ module.exports = new machina.Fsm({
         } else {
             logger.debug("dunno how to get this video: " + url);
         }
+    },
+    playpause: function() {
+        logger.debug("playpause event");
+    },
+    stop: function() {
+        logger.debug("stop event");
     }
 });

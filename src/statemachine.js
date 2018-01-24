@@ -77,19 +77,22 @@ module.exports = new machina.Fsm({
                 });
                 omx.stdout.on("data", function(data) {
                     logger.debug(data.toString());
-                })
+                });
+                omx.stdin.setEncoding("utf8");
                 omx.on("close", function () {
                     logger.debug("omx closed");
                     omx = null;
                 });
                 
                 //logger.debug("omxplayer -o local '" + bestformat_url + "'");
-            }
-        },
-        s_paused: {
-            _onEnter: function() {
-                logger.info("state: " + this.state);
             },
+            playpause: function () {
+                omx.stdin.write("p\n");
+            },
+            stop: function() {
+                omx.stdin.write("q\n");
+                this.transition("s_ended");
+            }
         },
         s_ended: {
             _onEnter: function() {
@@ -118,8 +121,10 @@ module.exports = new machina.Fsm({
     },
     playpause: function() {
         logger.debug("playpause event");
+        this.handle("playpause");
     },
     stop: function() {
         logger.debug("stop event");
+        this.handle("stop");
     }
 });

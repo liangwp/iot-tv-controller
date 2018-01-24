@@ -20,14 +20,30 @@ function playURL(inputel) {
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify({"url": url}));
 }
-function commandPlayer(endpoint)
+function simpleCommandPlayer(endpoint) {
+    var xhr = new XMLHttpRequest();
+    
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4) {
+            if (this.status == 200) {
+                console.log(this.responseText);
+            } else {
+                console.error(this.responseText);
+            }
+        }
+    };
+    
+    xhr.open("GET", endpoint, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(null);
+}
 </script>
 </head>
 <body>
 Enter youtube url here:<br>
 <input type="url" id="myurl" value="https://www.youtube.com/watch?v=k7u9WrQsN_k" size="100"><br>
 <input type="button" value="play url" onclick="playURL('myurl');">
-<input type="button" value="play/pause" onclick="commandPlayer('/play-pause');">
-<input type="button" value="stop" onclick="commandPlayer('/stop');">
+<input type="button" value="play/pause" onclick="simpleCommandPlayer('/play-pause');">
+<input type="button" value="stop" onclick="simpleCommandPlayer('/stop');">
 </body>
 </html>

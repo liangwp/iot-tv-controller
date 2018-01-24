@@ -64,7 +64,7 @@ module.exports = new machina.Fsm({
             }
         },
         s_playing: {
-            _onEnter: function() {var 
+            _onEnter: function() {
                 logger.info("state: " + this.state);
             },
             playVideo: function(bestformat_url) {

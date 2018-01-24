@@ -3,14 +3,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
-const Promise = require("bluebird");
 const fs = require("fs-extra");
-const child_process = require("child_process");
 
 const cLogger = require("./common-logger.js");
-const logger = cLogger("mylog");
-
-const machina = require("machina");
+const logger = cLogger("server-api");
 
 var app = express();
 var jsonParser = bodyParser.json();
@@ -19,72 +15,20 @@ var htmlform = fs.readFileSync("./src/form.html");
 
 var omx = null;
 
-var playerState = null; // initialized by the FSM constructor later
+var playerState = require("./statemachine.js")
 
 app.get("/", function (req, res) {
-    // for testing purposes, re-read the form
     logger.debug(playerState.state);
+    // for testing purposes, re-read the form
     htmlform = fs.readFileSync("./src/form.html");
     res.end(htmlform);
 });
 
-app.get("/test", function (req, res) {
-    logger.debug("testevent emitted called");
-    playerState.emit("testevent", {arg: "argA"})
-    res.end("should switch to untest state");
-});
-
-app.get("/untest", function (req, res) {
-    logger.debug("untestevent emitted called");
-    playerState.emit("untestevent", {arg: "argB"})
-    res.end("should switch to test state");
-});
-
-app.get("/test2", function (req, res) {
-    logger.debug("handle testevent2 called");
-    playerState.play({arg: "argC"});
-    res.end("should switch to test state from Ready state");
-});
-
 app.post("/play-youtube", jsonParser, function (req, res) {
-    logger.debug(req.body);
+    //logger.debug(req.body);
     res.end("ok");
-    
-    var p = new Promise(function(resolve, reject) {
-        var params = "-g -f best " + req.body.url;
-        var cp = child_process.spawn("youtube-dl", params.split(" "));
-        
-        var bestformat_url = "";
-        cp.stdout.on("data", function(data) {
-            bestformat_url += data.toString();
-        });
-        /*
-        cp.stderr.on("data", function(data) {
-            logger.debug(data.toString());
-        });
-        */
-        cp.on("close", function () {
-            logger.debug(bestformat_url);
-            resolve(bestformat_url.slice(0, bestformat_url.length-1)); // cut away the extra linebreak
-        });
-    });
-    p.then(function (bestformat_url) {
-        var params = "-o local '" +  bestformat_url + "'";
-        var omx = child_process.spawn("omxplayer", params.split(" "));
-        omx.stderr.on("data", function(data) {
-            logger.error(data.toString());
-        });
-        omx.stdout.on("data", function(data) {
-            logger.debug(data.toString());
-        })
-        omx.on("close", function () {
-            logger.debug("omx closed");
-            omx = null;
-        });
-    });
+    playerState.getvideo(req.body.url);
 });
-
-
 
 function app_cleanup(signal) {
     logger.info("app shutting down: " + signal);
@@ -95,90 +39,7 @@ process.on("SIGINT", app_cleanup);
 process.on("SIGTERM", app_cleanup);
 
 
-playerState = new machina.Fsm({
-    initialState: "s_uninitialized",
-    states: {
-        s_uninitialized: {
-            _onEnter: function() {
-                logger.info("state: " + this.state);
-            }
-        },
-        s_ready: {
-            _onEnter: function() {
-                logger.info("state: " + this.state);
-            },
-            testevent2: function (arg) {
-                logger.info("testevent2 is handled: " + arg.arg);
-            }
-        },
-        s_test: {
-            _onEnter: function() {
-                logger.info("state: " + this.state);
-            }
-        },
-        s_untest: {
-            _onEnter: function() {
-                logger.info("state: " + this.state);
-            }
-        },
-        s_gettingvideo: {
-            _onEnter: function() {
-                logger.info("state: " + this.state);
-            },
-        },
-        s_playing: {
-            _onEnter: function() {
-                logger.info("state: " + this.state);
-            },
-        },
-        s_paused: {
-            _onEnter: function() {
-                logger.info("state: " + this.state);
-            },
-        },
-        s_ended: {
-            _onEnter: function() {
-                logger.info("state: " + this.state);
-            },
-        },
-        s_error: {
-            _onEnter: function() {
-                logger.info("state: " + this.state);
-            },
-        }
-    },
-    // inputs
-    initialize: function () {
-        logger.info("app started on port 8080");
-        app.listen(8080);
-        this.transition("s_ready");
-    },
-    play: function (data) {
-        logger.debug(data);
-        this.handle("testevent2", data);
-    }
-});
-
-playerState.on("testevent", function () {
-    logger.debug("testevent caught, should transition to test state if in ready state or transition to test state if in untest state");
-    if (playerState.state == "ready") {
-        playerState.transition("s_test");
-    } else if (playerState.state == "test") {
-        playerState.transition("s_untest");
-    } else {
-        logger.debug("no transition");
-    }
-});
-
-playerState.on("untestevent", function () {
-    logger.debug("untestevent caught, should transition to test state if in untest state");
-    if (playerState.state == "untest") {
-        playerState.transition("s_test");
-    } else {
-        logger.debug("no transition");
-    }
-});
-
+playerState.startServer(app);
 
 /* notes
 

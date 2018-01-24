@@ -88,9 +88,11 @@ module.exports = new machina.Fsm({
             },
             playpause: function () {
                 omx.stdin.write("p\n");
+                omx.stdin.end();
             },
             stop: function() {
                 omx.stdin.write("q\n");
+                omx.stdin.end();
                 this.transition("s_ended");
             }
         },

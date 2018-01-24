@@ -81,24 +81,24 @@ module.exports = new machina.Fsm({
                 omx.stdin.setEncoding("utf8");
                 omx.on("close", function () {
                     logger.debug("omx closed");
-                    omx = null;
+                    this.transition("s_ended");
                 });
                 
                 //logger.debug("omxplayer -o local '" + bestformat_url + "'");
             },
             playpause: function () {
-                omx.stdin.write("p\n");
-                omx.stdin.end();
+                omx.stdin.write("p");
             },
             stop: function() {
-                omx.stdin.write("q\n");
-                omx.stdin.end();
-                this.transition("s_ended");
+                omx.stdin.write("q");
+                // "close" event fires on omx process
             }
         },
         s_ended: {
             _onEnter: function() {
                 logger.info("state: " + this.state);
+                omx = null;
+                this.transition("s_ready");
             },
         },
         s_error: {

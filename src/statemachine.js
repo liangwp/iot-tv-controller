@@ -7,6 +7,7 @@ const child_process = require("child_process");
 const cLogger = require("./common-logger.js");
 const logger = cLogger("playerstate");
 
+var omx = null;
 
 module.exports = new machina.Fsm({
     initialState: "s_uninitialized",
@@ -63,14 +64,14 @@ module.exports = new machina.Fsm({
             }
         },
         s_playing: {
-            _onEnter: function() {
+            _onEnter: function() {var 
                 logger.info("state: " + this.state);
             },
             playVideo: function(bestformat_url) {
-                
-                logger.debug(bestformat_url);
-                var params = "-o local '" +  bestformat_url + "'";
-                var omx = child_process.spawn("omxplayer", params.split(" "));
+
+                logger.debug("starting omx player...");
+                var params = "-o local " +  bestformat_url;
+                omx = child_process.spawn("omxplayer", params.split(" "));
                 omx.stderr.on("data", function(data) {
                     logger.error(data.toString());
                 });

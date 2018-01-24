@@ -79,7 +79,7 @@ module.exports = new machina.Fsm({
                     logger.debug(data.toString());
                 });
                 omx.stdin.setEncoding("utf8");
-                omx.on("close", function () {
+                omx.on("close", () => {
                     logger.debug("omx closed");
                     this.transition("s_ended");
                 });

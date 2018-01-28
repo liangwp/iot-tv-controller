@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<head><title>basic iot tv controller</title>
+<head>
+<title>basic iot tv controller</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <script>
 function playURL(inputel) {
     var url = document.getElementById(inputel).value;
@@ -40,10 +42,12 @@ function simpleCommandPlayer(endpoint) {
 </script>
 </head>
 <body>
-Enter youtube url here:<br>
-<input type="url" id="myurl" value="https://www.youtube.com/watch?v=k7u9WrQsN_k" size="100"><br>
-<input type="button" value="play url" onclick="playURL('myurl');">
-<input type="button" value="play/pause" onclick="simpleCommandPlayer('/play-pause');">
-<input type="button" value="stop" onclick="simpleCommandPlayer('/stop');">
+    <div class="container-fluid">
+        Play a video URL:<br>
+        <input class="form-control" type="url" id="myurl" placeholder="Enter url" value="https://www.youtube.com/watch?v=k7u9WrQsN_k"><br>
+        <input class="btn btn-primary" type="button" value="play url" onclick="playURL('myurl');">
+        <input class="btn btn-warning" type="button" value="play/pause" onclick="simpleCommandPlayer('/play-pause');">
+        <input class="btn btn-danger" type="button" value="stop" onclick="simpleCommandPlayer('/stop');">
+    </div>
 </body>
 </html>

@@ -40,3 +40,10 @@ fsm.run2(args2); // transitions into state b if in state a
     fsm.emit("eventname", arg) // fsm runs the callback with arg
     ```
     
+# Install and Run
+```
+apt-get install youtube-dl  
+git clone https://github.com/liangwp/iot-tv-controller.git  
+cd iot-tv-controller  
+nodejs src/index.js > /dev/null 2>&1 &```
+

@@ -70,7 +70,7 @@ module.exports = new machina.Fsm({
             playVideo: function(bestformat_url) {
 
                 logger.debug("starting omx player...");
-                var params = "-o local " +  bestformat_url;
+                var params = "-o hdmi " +  bestformat_url;
                 omx = child_process.spawn("omxplayer", params.split(" "));
                 omx.stderr.on("data", function(data) {
                     logger.error(data.toString());
